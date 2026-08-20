@@ -55,6 +55,11 @@
 - [Trionn: GSAP + Three + Lenis](https://tympanus.net/codrops/2026/07/15/the-architecture-behind-trionn-coordinating-gsap-three-js-lenis-and-web-audio/)
 - [Immersive stack 2026](https://adamarant.com/en/blog/immersive-web-stack-in-2026-lenis-gsap-and-what-to-skip)
 
+## Cursor Skills (снимок 2026-08-20)
+
+- [Cursor Skills](https://cursor.com/docs/skills)
+- [Agent Skills spec](https://agentskills.io)
+
 ## Экосистема (обзоры, не истина в последней инстанции)
 
 - [Python 3.14.7 / 3.13.15 — Python Insider](https://blog.python.org/2026/08/python-3147-31315/)
