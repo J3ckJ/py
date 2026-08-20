@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Демо: как устроены презентационные сайты</title>
+  <link rel="stylesheet" href="lib/base.css" />
+</head>
+<body>
+  <div class="wrap">
+    <nav class="top">
+      <a href="../README.md">← репозиторий</a>
+      <span>sites/</span>
+    </nav>
+    <p class="kicker">Интерактивные срезы</p>
+    <h1>Не библиотеки. Механики.</h1>
+    <p class="lead">
+      Семь страниц без npm и без ассетов Apple. Каждая показывает один приём,
+      из которых собирают «сайты как у Apple / Stripe». Читать теорию:
+      <a href="../06-сайты/README.md">06-сайты/</a>
+    </p>
+    <div class="grid">
+      <a class="card" href="01-composite.html">
+        <div class="badge">кадр</div>
+        <h2 style="margin-top:8px">1. Layout vs Composite</h2>
+        <p class="note">Почему анимация <code>top</code> дёргается, а <code>transform</code> — нет.</p>
+      </a>
+      <a class="card" href="02-scroll-css.html">
+        <div class="badge">CSS</div>
+        <h2 style="margin-top:8px">2. Scroll-driven CSS</h2>
+        <p class="note"><code>animation-timeline: scroll()</code> и <code>view()</code> без JavaScript.</p>
+      </a>
+      <a class="card" href="03-pin-story.html">
+        <div class="badge">sticky</div>
+        <h2 style="margin-top:8px">3. Главы на sticky</h2>
+        <p class="note">Высота 300vh, сцена приклеена, текст меняет смысл.</p>
+      </a>
+      <a class="card" href="04-canvas-scrub.html">
+        <div class="badge">canvas</div>
+        <h2 style="margin-top:8px">4. Scrub кадров</h2>
+        <p class="note">Скролл = индекс кадра. Процедурный «телефон», не чужие jpg.</p>
+      </a>
+      <a class="card" href="05-apple-keyframes.html">
+        <div class="badge">Apple</div>
+        <h2 style="margin-top:8px">5. Язык t / b / vh</h2>
+        <p class="note">Упрощённый парсер кейфреймов как у marcom Anim System.</p>
+      </a>
+      <a class="card" href="06-cloth-gradient.html">
+        <div class="badge">WebGL</div>
+        <h2 style="margin-top:8px">6. Cloth-градиент</h2>
+        <p class="note">Плоскость с vertex displacement — идея Stripe, не Three.js.</p>
+      </a>
+      <a class="card" href="07-reduced-motion.html">
+        <div class="badge">a11y</div>
+        <h2 style="margin-top:8px">7. Reduced motion</h2>
+        <p class="note">Один и тот же сюжет с движением и без.</p>
+      </a>
+    </div>
+    <p class="note" style="margin-top:32px">Открывать файлы напрямую или через любой static server. Для WebGL нужен браузер с GPU.</p>
+  </div>
+</body>
+</html>

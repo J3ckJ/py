@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sticky chapters</title>
+  <link rel="stylesheet" href="lib/base.css" />
+  <style>
+    .chapter { height: 280vh; position: relative; }
+    .sticky {
+      position: sticky; top: 0; height: 100vh;
+      display: grid; place-items: center; overflow: hidden;
+    }
+    .phone {
+      width: min(42vw, 220px); aspect-ratio: 9/19; border-radius: 28px;
+      background: linear-gradient(160deg, #3a3a3c, #1c1c1e);
+      border: 2px solid #48484a; box-shadow: 0 40px 80px #0008;
+      transition: background 0.6s;
+    }
+    .copy {
+      position: absolute; left: 8vw; right: 8vw; bottom: 12vh;
+      max-width: 22rem; font-size: 28px; letter-spacing: -0.03em;
+    }
+    #c1 .phone { background: linear-gradient(160deg, #5e5ce6, #1c1c1e); }
+    #c2 .phone { background: linear-gradient(160deg, #ff375f, #1c1c1e); }
+    #c3 .phone { background: linear-gradient(160deg, #30d158, #1c1c1e); }
+  </style>
+</head>
+<body>
+  <div class="wrap" style="padding-bottom: 0;">
+    <nav class="top"><a href="index.html">← демо</a></nav>
+    <p class="kicker">position: sticky</p>
+    <h1>Три главы, один объект</h1>
+    <p class="lead">Каждая глава — 280vh. Сцена 100vh приклеена. Это pin без GSAP: время покупается высотой документа.</p>
+  </div>
+  <section class="chapter" id="c1">
+    <div class="sticky">
+      <div class="phone" aria-hidden="true"></div>
+      <p class="copy">Сначала видите корпус.</p>
+    </div>
+  </section>
+  <section class="chapter" id="c2">
+    <div class="sticky">
+      <div class="phone" aria-hidden="true"></div>
+      <p class="copy">Потом — камеру.</p>
+    </div>
+  </section>
+  <section class="chapter" id="c3">
+    <div class="sticky">
+      <div class="phone" aria-hidden="true"></div>
+      <p class="copy">Потом — то, ради чего всё это.</p>
+    </div>
+  </section>
+  <div class="wrap"><p class="note">Apple делает то же, плюс меняет медиа внутри sticky. Здесь цвет — заглушка ролика.</p></div>
+</body>
+</html>

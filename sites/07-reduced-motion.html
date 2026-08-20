@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reduced motion</title>
+  <link rel="stylesheet" href="lib/base.css" />
+  <style>
+    .orb {
+      width: 160px; height: 160px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #2997ff, #1c1c1e);
+      animation: float 4s ease-in-out infinite;
+    }
+    @keyframes float {
+      50% { transform: translateY(-24px) scale(1.04); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .orb { animation: none; }
+    }
+    .state { margin-top: 16px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav class="top"><a href="index.html">← демо</a></nav>
+    <p class="kicker">контракт, не украшение</p>
+    <h1>Тот же сюжет без укачивания</h1>
+    <p class="lead">Включите «уменьшить движение» в ОС. Орб остановится — CSS сам. JS ниже только подписывает состояние. Настоящий Apple-сайт в этом режиме не скрабит видео.</p>
+    <div class="orb" aria-hidden="true"></div>
+    <p class="state" id="st"></p>
+  </div>
+  <script>
+    const mq = matchMedia("(prefers-reduced-motion: reduce)");
+    const st = document.getElementById("st");
+    function paint() {
+      st.textContent = mq.matches
+        ? "prefers-reduced-motion: reduce — анимация снята, контент на месте."
+        : "prefers-reduced-motion: no-preference — лёгкий float на transform (compositor).";
+    }
+    mq.addEventListener("change", paint);
+    paint();
+  </script>
+</body>
+</html>
