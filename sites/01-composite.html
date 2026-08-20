@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Layout vs Composite</title>
+  <link rel="stylesheet" href="lib/base.css" />
+  <style>
+    .stage { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 32px; min-height: 280px; }
+    .box-wrap { position: relative; height: 240px; border: 1px dashed var(--line); border-radius: 12px; overflow: hidden; }
+    .ball { width: 72px; height: 72px; border-radius: 50%; position: absolute; left: 20px; }
+    .layout { background: var(--danger); top: 20px; animation: bounce-top 1s ease-in-out infinite alternate; }
+    .composite { background: var(--ok); top: 20px; animation: bounce-tf 1s ease-in-out infinite alternate; will-change: transform; }
+    @keyframes bounce-top { from { top: 20px; } to { top: 150px; } }
+    @keyframes bounce-tf { from { transform: translateY(0); } to { transform: translateY(130px); } }
+    @media (max-width: 700px) { .stage { grid-template-columns: 1fr; } }
+    @media (prefers-reduced-motion: reduce) {
+      .ball { animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav class="top"><a href="index.html">← демо</a></nav>
+    <p class="kicker">Пайплайн кадра</p>
+    <h1>top красит layout. transform — слой.</h1>
+    <p class="lead">Откройте Chrome DevTools → Rendering → «Paint flashing» и «Layer borders». Левый шар вспыхивает paint каждый кадр. Правый двигает текстуру.</p>
+    <div class="stage">
+      <div>
+        <p><code>animation: top</code></p>
+        <div class="box-wrap"><div class="ball layout"></div></div>
+      </div>
+      <div>
+        <p><code>transform + will-change</code></p>
+        <div class="box-wrap"><div class="ball composite"></div></div>
+      </div>
+    </div>
+    <p class="note">На 60 fps левый путь делает Style→Layout→Paint→Composite. Правый прыгает к Composite. Это единственная причина, почему презентационные сайты одержимы transform/opacity.</p>
+  </div>
+</body>
+</html>

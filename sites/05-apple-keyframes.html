@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apple-like keyframes</title>
+  <link rel="stylesheet" href="lib/base.css" />
+  <style>
+    .tall { height: 240vh; position: relative; }
+    .box {
+      width: min(90vw, 520px); margin: 40vh auto; padding: 32px;
+      border-radius: 20px; border: 1px solid var(--line); background: #161618;
+    }
+    .box.on { border-color: var(--accent); box-shadow: 0 0 0 4px #2997ff33; }
+    .log { white-space: pre-wrap; color: var(--muted); font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav class="top"><a href="index.html">← демо</a></nav>
+    <p class="kicker">упрощённый Anim System</p>
+    <h1><code>t - (100vh - 70h)</code></h1>
+    <p class="lead">На iPhone 17 Pro / apple.com home кейфреймы — JSON в data-атрибутах. Здесь тот же язык координат. Коробка включает класс, когда интервал пересекает вьюпорт.</p>
+  </div>
+  <div class="tall">
+    <div class="box" id="target"
+          data-kf-start="t - (100vh - 70h)"
+         data-kf-end="b">
+      <strong>Inline media zone</strong>
+      <p>start = верх элемента минус (вьюпорт − 70% его высоты). end = низ элемента.</p>
+      <p class="log" id="log"></p>
+    </div>
+  </div>
+  <script>
+    function parseExpr(expr, el) {
+      const rect = el.getBoundingClientRect();
+      const absTop = rect.top + scrollY;
+      const h = rect.height;
+      const vh = innerHeight;
+      const t = absTop;
+      const b = absTop + h;
+      const renamed = expr
+        .replace(/\s+/g, "")
+        .replace(/(\d+(?:\.\d+)?)vh/g, (_, n) => String((parseFloat(n) / 100) * vh))
+        .replace(/(\d+(?:\.\d+)?)h/g, (_, n) => {
+          const v = parseFloat(n);
+          return String((v > 1 ? v / 100 : v) * h);
+        })
+        .replace(/\bt\b/g, String(t))
+        .replace(/\bb\b/g, String(b));
+      if (!/^[-+*/().0-9]+$/.test(renamed)) throw new Error("bad expr " + expr);
+      return Function("return (" + renamed + ")")();
+    }
+
+    const el = document.getElementById("target");
+    const log = document.getElementById("log");
+    let dirty = true;
+    function update() {
+      const start = parseExpr(el.dataset.kfStart, el);
+      const end = parseExpr(el.dataset.kfEnd, el);
+      const y = scrollY + 0; // playhead = top of viewport in document coords... 
+      // Apple uses whether the range overlaps viewport. Treat as: viewport top in [start,end] is wrong.
+      // Their events fire when element range relative to scroll intersects.
+      // We use: documentY of viewport-center vs [start,end] mapped from element edges.
+      const viewTop = scrollY;
+      const active = viewTop + innerHeight * 0.5 >= start && viewTop <= end;
+      el.classList.toggle("on", active);
+      const p = Math.min(1, Math.max(0, (viewTop - start) / Math.max(1, end - start)));
+      log.textContent =
+        "start=" + Math.round(start) +
+        "\nend=" + Math.round(end) +
+        "\nscrollY=" + Math.round(viewTop) +
+        "\ninside=" + active +
+        "\nprogress≈" + p.toFixed(3) +
+        "\n(как onEnter/onExit у InlineMedia)";
+    }
+    addEventListener("scroll", () => { dirty = true; }, { passive: true });
+    addEventListener("resize", () => { dirty = true; }, { passive: true });
+    function tick() {
+      requestAnimationFrame(tick);
+      if (!dirty) return;
+      dirty = false;
+      update();
+    }
+    tick();
+  </script>
+</body>
+</html>

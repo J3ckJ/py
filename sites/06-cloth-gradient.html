@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cloth gradient</title>
+  <link rel="stylesheet" href="lib/base.css" />
+  <style>
+    #gl { width: 100%; height: min(70vh, 520px); display: block; border-radius: 20px; }
+    .fallback { display: none; height: min(70vh, 520px); border-radius: 20px;
+      background: linear-gradient(120deg, #0a2540, #635bff, #00d4ff); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav class="top"><a href="index.html">← демо</a></nav>
+    <p class="kicker">WebGL без Three.js</p>
+    <h1>Ткань, не fullscreen-noise</h1>
+    <p class="lead">Stripe: мало вершин, displacement в vertex shader, цвет с вершины. Если WebGL нет — CSS-градиент.</p>
+    <canvas id="gl"></canvas>
+    <div class="fallback" id="fb"></div>
+    <p class="note">Пауза, когда вкладка скрыта. DPR capped 1.5. Сетка 36×22.</p>
+  </div>
+  <script>
+    const canvas = document.getElementById("gl");
+    const fb = document.getElementById("fb");
+    const gl = canvas.getContext("webgl");
+    if (!gl) {
+      canvas.style.display = "none";
+      fb.style.display = "block";
+    } else {
+      const vs = `
+        attribute vec2 a;
+        uniform float uTime;
+        uniform vec2 uRes;
+        varying vec3 vCol;
+        void main() {
+          float x = a.x;
+          float y = a.y;
+          float d = sin(x * 3.2 + uTime) * 0.08 + sin(y * 4.1 - uTime * 0.7) * 0.06;
+          vec2 p = vec2(x, y + d);
+          gl_Position = vec4(p, 0.0, 1.0);
+          vCol = mix(vec3(0.04, 0.15, 0.25), vec3(0.39, 0.36, 1.0), 0.5 + 0.5 * y);
+          vCol += vec3(0.0, 0.4, 0.5) * (0.5 + 0.5 * sin(uTime + x * 2.0));
+        }
+      `;
+      const fs = `
+        precision mediump float;
+        varying vec3 vCol;
+        void main() { gl_FragColor = vec4(vCol, 1.0); }
+      `;
+      function compile(type, src) {
+        const s = gl.createShader(type);
+        gl.shaderSource(s, src);
+        gl.compileShader(s);
+        return s;
+      }
+      const prog = gl.createProgram();
+      gl.attachShader(prog, compile(gl.VERTEX_SHADER, vs));
+      gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fs));
+      gl.linkProgram(prog);
+      gl.useProgram(prog);
+      const COLS = 36, ROWS = 22;
+      const verts = [];
+      const idx = [];
+      for (let y = 0; y <= ROWS; y++) {
+        for (let x = 0; x <= COLS; x++) {
+          verts.push((x / COLS) * 2 - 1, (y / ROWS) * 2 - 1);
+        }
+      }
+      for (let y = 0; y < ROWS; y++) {
+        for (let x = 0; x < COLS; x++) {
+          const i = y * (COLS + 1) + x;
+          idx.push(i, i + 1, i + COLS + 1, i + 1, i + COLS + 2, i + COLS + 1);
+        }
+      }
+      const buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
+      const ibo = gl.createBuffer();
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(idx), gl.STATIC_DRAW);
+      const loc = gl.getAttribLocation(prog, "a");
+      gl.enableVertexAttribArray(loc);
+      gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+      const uTime = gl.getUniformLocation(prog, "uTime");
+      const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let t0 = performance.now();
+      function resize() {
+        const dpr = Math.min(devicePixelRatio || 1, 1.5);
+        const w = canvas.clientWidth, h = canvas.clientHeight;
+        canvas.width = Math.max(1, w * dpr);
+        canvas.height = Math.max(1, h * dpr);
+        gl.viewport(0, 0, canvas.width, canvas.height);
+      }
+      addEventListener("resize", resize);
+      resize();
+      function frame(now) {
+        requestAnimationFrame(frame);
+        if (document.hidden) return;
+        const t = reduced ? 0.6 : (now - t0) / 1000;
+        gl.uniform1f(uTime, t);
+        gl.drawElements(gl.TRIANGLES, idx.length, gl.UNSIGNED_SHORT, 0);
+      }
+      requestAnimationFrame(frame);
+    }
+  </script>
+</body>
+</html>
